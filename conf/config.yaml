@@ -1,0 +1,48 @@
+# Configuration globale du projet Data Warehouse Énergie France
+
+# Chemins de données
+paths:
+  landing: "data/landing"
+  warehouse: "data/warehouse"
+  bronze: "data/warehouse/bronze"
+  silver: "data/warehouse/silver"
+  gold: "data/warehouse/gold"
+  dq: "data/warehouse/dq"
+
+# Sources de données à ingérer
+sources:
+  - name: "france_time_series"
+    file: "france_time_series.csv"
+    delimiter: ","
+    header: true
+    
+  - name: "eurostat_electricity_france"
+    file: "eurostat_electricity_france.csv"
+    delimiter: ","
+    header: true
+    
+  - name: "time_series_60min_sample"
+    file: "time_series_60min_sample.csv"
+    delimiter: ","
+    header: true
+    
+  - name: "renewable_power_plants_FR"
+    file: "renewable_power_plants_FR.csv"
+    delimiter: ","
+    header: true
+
+# Configuration Spark
+spark:
+  app_name: "DWH_Energie_France"
+  master: "local[*]"
+  log_level: "WARN"
+  
+# Partitionnement
+partitioning:
+  bronze:
+    enabled: true
+    column: "_ingest_date"
+  silver:
+    enabled: false
+  gold:
+    enabled: false

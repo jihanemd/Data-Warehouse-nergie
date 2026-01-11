@@ -1,0 +1,53 @@
+# Environnement Python
+venv_spark/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+env/
+ENV/
+
+# Données volumineuses (warehouse)
+data/warehouse/bronze/
+data/warehouse/silver/
+data/warehouse/gold/
+data/warehouse/dq/
+
+# Fichiers CSV (optionnel - commentez si vous voulez les inclure)
+# data/landing/
+
+# Logs et fichiers temporaires
+*.log
+pipeline.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Fichiers systèmes
+hadoop/
+.env
+.env.local
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Fichiers OS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.sw[op]
+*~
+.#*
