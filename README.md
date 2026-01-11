@@ -1,4 +1,4 @@
-# 🚀 Data Warehouse Énergie France
+# 🚀 Data Warehouse Énergie 
 
 **Pipeline ETL: CSV → PostgreSQL → Dashboard Interactif**
 
