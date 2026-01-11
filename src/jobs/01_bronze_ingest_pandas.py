@@ -1,13 +1,4 @@
-"""
-📘 BRONZE LAYER - Ingestion RAW Data (Version PANDAS - Simple & Robuste)
-─────────────────────────────────────
-Version alternative utilisant Pandas au lieu de Spark
-- Pas de dépendance Java
-- Même logique: ingestion RAW → Parquet
-- Parfait pour validation et petits volumes
-
-Note: Version Spark est preferée pour production/gros volumes
-"""
+"""Bronze Layer - CSV Ingestion to Parquet (Pandas)"""
 
 import os
 import sys

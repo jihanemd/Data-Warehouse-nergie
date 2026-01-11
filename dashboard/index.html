@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔋 Energy DW - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- MAIN CONTENT -->
+        <div style="flex: 1; width: 100%;">
+            <!-- HEADER -->
+            <header class="header">
+                <h1 class="header-title">🔋 Dashboard Énergie France</h1>
+                <div class="header-right">
+                    <button class="btn-primary">
+                        <i class="fas fa-refresh"></i> Actualiser
+                    </button>
+                    <div class="user-profile">
+                        <div class="avatar">JD</div>
+                        <span>user-profile</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="main-content">
+                <!-- KPI CARDS -->
+                <div class="kpi-grid">
+                    <div class="kpi-card fade-in">
+                        <div class="kpi-icon" style="color: #00d4ff;">⚡</div>
+                        <div class="kpi-label">Production totale</div>
+                        <div class="kpi-value">1,234 MW</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5% vs hier
+                        </div>
+                    </div>
+
+                    <div class="kpi-card fade-in accent-pink" style="animation-delay: 0.1s;">
+                        <div class="kpi-icon" style="color: #ff4d7d;">☀️</div>
+                        <div class="kpi-label">Production solaire</div>
+                        <div class="kpi-value">342 MW</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +8.3% vs hier
+                        </div>
+                    </div>
+
+                    <div class="kpi-card fade-in accent-purple" style="animation-delay: 0.2s;">
+                        <div class="kpi-icon" style="color: #9d5bff;">💨</div>
+                        <div class="kpi-label">Production éolienne</div>
+                        <div class="kpi-value">567 MW</div>
+                        <div class="kpi-change negative">
+                            <i class="fas fa-arrow-down"></i> -3.2% vs hier
+                        </div>
+                    </div>
+
+                    <div class="kpi-card fade-in" style="animation-delay: 0.3s;">
+                        <div class="kpi-icon" style="color: #00ff7f;">💧</div>
+                        <div class="kpi-label">Capacité installée</div>
+                        <div class="kpi-value">28.5 GW</div>
+                        <div class="kpi-change neutral">
+                            <i class="fas fa-minus"></i> Stable
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID ROW 1 -->
+                <div class="charts-grid">
+                    <!-- PRODUCTION PAR TYPE -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.4s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Production par type</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="productionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCTION HORAIRE -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.5s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Production horaire (24h)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="hourlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID ROW 2 -->
+                <div class="charts-grid">
+                    <!-- CAPACITÉ PAR RÉGION -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.6s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Capacité par région</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="capacityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- RÉPARTITION ÉNERGIES -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.7s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Répartition des énergies</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID ROW 3 -->
+                <div class="charts-grid">
+                    <!-- PRODUCTION PAR ANNÉE -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.8s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Production par année (MW)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="yearlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- CROISSANCE ANNUELLE -->
+                    <div class="chart-container fade-in" style="animation-delay: 0.9s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Croissance annuelle</h2>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARTE SIG (PLEINE LARGEUR) -->
+                <div class="charts-grid full-width">
+                    <div class="chart-container fade-in" style="animation-delay: 1s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">🗺️ Carte SIG - Installations Énergétiques</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div id="map-container" class="map-leaflet-container"></div>
+                    </div>
+                </div>
+
+                <!-- CONSOMMATION SECTION -->
+                <h2 style="margin-top: 20px; margin-bottom: 10px; font-size: 18px; color: var(--text-primary);">📊 Consommation Énergétique</h2>
+
+                <!-- CHARTS GRID CONSOMMATION ROW 1 -->
+                <div class="charts-grid triple">
+                    <!-- CONSOMMATION PAR SECTEUR -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.1s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Consommation par secteur</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="consumptionSectorChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- CONSOMMATION PAR RÉGION -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.2s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Consommation par région</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="consumptionRegionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- CONSOMMATION HORAIRE -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.3s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Consommation horaire (24h)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="consumptionHourlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID CONSOMMATION ROW 2 -->
+                <div class="charts-grid triple">
+                    <!-- TENDANCE CONSOMMATION -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.4s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Tendance consommation (12 mois)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="consumptionTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- CONSOMMATION VS PRODUCTION -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.5s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Consommation vs Production</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="balanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- EFFICACITÉ ÉNERGÉTIQUE -->
+                    <div class="chart-container fade-in" style="animation-delay: 1.6s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Efficacité énergétique</h2>
+                        </div>
+                        <div style="padding: 20px 0;">
+                            <div style="margin-bottom: 25px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Utilisation réseau</span>
+                                    <span style="color: var(--primary); font-weight: 600;">87%</span>
+                                </div>
+                                <div class="percentage-bar">
+                                    <div class="bar-background">
+                                        <div class="bar-fill" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 25px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Capacité disponible</span>
+                                    <span style="color: var(--accent-pink); font-weight: 600;">64%</span>
+                                </div>
+                                <div class="percentage-bar">
+                                    <div class="bar-background">
+                                        <div class="bar-fill" style="width: 64%; background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 25px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Performance solaire</span>
+                                    <span style="color: var(--success); font-weight: 600;">79%</span>
+                                </div>
+                                <div class="percentage-bar">
+                                    <div class="bar-background">
+                                        <div class="bar-fill" style="width: 79%; background: linear-gradient(90deg, var(--success), var(--primary));"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE INSTALLATIONS -->
+                <div class="table-container fade-in" style="animation-delay: 1s; margin-top: 30px;">
+                    <div class="chart-header" style="margin-bottom: 20px;">
+                        <h2 class="chart-title">Top 10 installations</h2>
+                        <div class="chart-menu">
+                            <button class="chart-menu-btn" title="Options">⋮</button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Installation</th>
+                                <th>Type</th>
+                                <th>Région</th>
+                                <th>Capacité (MW)</th>
+                                <th>Production (MW)</th>
+                                <th>Efficacité</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Centrale Solaire Nord</strong></td>
+                                <td>☀️ Solaire</td>
+                                <td>Hauts-de-France</td>
+                                <td>125.5</td>
+                                <td>98.3</td>
+                                <td>
+                                    <div class="percentage-bar" style="margin: 0;">
+                                        <div class="bar-background">
+                                            <div class="bar-fill" style="width: 78%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parc Éolien Est</strong></td>
+                                <td>💨 Éolien</td>
+                                <td>Auvergne-Rhône-Alpes</td>
+                                <td>234.2</td>
+                                <td>187.6</td>
+                                <td>
+                                    <div class="percentage-bar" style="margin: 0;">
+                                        <div class="bar-background">
+                                            <div class="bar-fill" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Barrage Hydro Centre</strong></td>
+                                <td>💧 Hydro</td>
+                                <td>Île-de-France</td>
+                                <td>156.8</td>
+                                <td>142.1</td>
+                                <td>
+                                    <div class="percentage-bar" style="margin: 0;">
+                                        <div class="bar-background">
+                                            <div class="bar-fill" style="width: 90%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parc Solaire Ouest</strong></td>
+                                <td>☀️ Solaire</td>
+                                <td>Nouvelle-Aquitaine</td>
+                                <td>198.3</td>
+                                <td>165.2</td>
+                                <td>
+                                    <div class="percentage-bar" style="margin: 0;">
+                                        <div class="bar-background">
+                                            <div class="bar-fill" style="width: 83%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Éolien offshore Sud</strong></td>
+                                <td>💨 Éolien</td>
+                                <td>Provence-Alpes-Côte d'Azur</td>
+                                <td>287.5</td>
+                                <td>201.3</td>
+                                <td>
+                                    <div class="percentage-bar" style="margin: 0;">
+                                        <div class="bar-background">
+                                            <div class="bar-fill" style="width: 70%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-warning">Maintenance</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ========================================
+                     SECTION AVANCÉE - ANALYSES COMPLEXES
+                     ======================================== -->
+
+                <h2 style="margin-top: 20px; margin-bottom: 10px; font-size: 18px; color: var(--text-primary);">🔬 Analyses Avancées - Données PostgreSQL</h2>
+
+                <!-- ROW 1: Production par Ville (Multi-années) -->
+                <div class="charts-grid">
+                    <div class="chart-container fade-in" style="animation-delay: 1.7s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Production par région (2020-2024)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="productionCityYearChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container fade-in" style="animation-delay: 1.8s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Comparaison régionale 2024</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="cityComparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2: Tendance Production + Mix Énergétique par Ville -->
+                <div class="charts-grid">
+                    <div class="chart-container fade-in" style="animation-delay: 1.9s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Tendance production 5 ans</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="productionTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container fade-in" style="animation-delay: 2s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Mix énergétique par région</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="energyMixCityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 3: Optimisation + Distribution -->
+                <div class="charts-grid">
+                    <div class="chart-container fade-in" style="animation-delay: 2.1s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Efficacité installations (Top 15)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="optimizationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container fade-in" style="animation-delay: 2.2s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Efficacité distribution par région</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="distributionEfficiencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 4: Capacité installée + Résumé mensuel -->
+                <div class="charts-grid">
+                    <div class="chart-container fade-in" style="animation-delay: 2.3s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Capacité installée par type</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="capacityByTypeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container fade-in" style="animation-delay: 2.4s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">Résumé production mensuel (3 ans)</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="monthlySummaryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 5: Analyse des pertes distribution -->
+                <div class="charts-grid full-width">
+                    <div class="chart-container fade-in" style="animation-delay: 2.5s;">
+                        <div class="chart-header">
+                            <h2 class="chart-title">📊 Analyse distribution: Production vs Pertes vs Distribution nette</h2>
+                            <div class="chart-menu">
+                                <button class="chart-menu-btn" title="Options">⋮</button>
+                            </div>
+                        </div>
+                        <div class="chart-canvas-container">
+                            <canvas id="distributionAnalysisChart" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/charts.js"></script>
+    <script src="js/advanced-charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

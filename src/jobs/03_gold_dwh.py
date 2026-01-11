@@ -1,22 +1,4 @@
-"""
-📘 GOLD LAYER - Data Warehouse (Star Schema Enrichi)
-──────────────────────────────────────────────────
-Objectif: Créer un schéma en étoile complet pour la BI
-Dimensions: dim_date, dim_energy_type, dim_location, dim_plant
-Fact tables: fact_energy_production, fact_renewable_capacity, fact_monthly_summary
-
-Architecture:
-  silver/ (données nettoyées)
-    ↓
-  gold/ (Star Schema Enrichi - 7 tables)
-    ├── dim_date/                (4,383 jours)
-    ├── dim_energy_type/         (5 types)
-    ├── dim_location/            (Régions FR)
-    ├── dim_plant/               (9,744 installations)
-    ├── fact_energy_production/  (6,301 agrégations)
-    ├── fact_renewable_capacity/ (Capacité installée)
-    └── fact_monthly_summary/    (Résumés mensuels)
-"""
+"""Gold Layer - Star Schema Data Warehouse"""
 
 import os
 import sys

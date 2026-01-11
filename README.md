@@ -1,484 +1,283 @@
-# 🚀 Data Warehouse Énergie France - PRODUCTION ✅
+# 🚀 Data Warehouse Énergie France
 
-**Pipeline ETL Complet: CSV → Parquet → PostgreSQL**
+**Pipeline ETL: CSV → PostgreSQL → Dashboard Interactif**
 
-Projet de Data Warehouse opérationnel pour l'analyse des données d'énergie en France avec pipeline ETL en 4 étapes (Bronze → Silver → Gold → PostgreSQL) et 20,488 lignes chargées en base de données.
-
----
-
-## 📋 Table des matières
-
-- [🎯 Aperçu](#-aperçu)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Installation](#️-installation)
-- [🎯 Utilisation](#-utilisation)
-- [📂 Structure](#-structure)
-- [💾 Star Schema](#-star-schema)
-- [📊 Requêtes SQL](#-requêtes-sql)
-- [🔌 Connexion BI](#-connexion-bi)
-- [✅ Status](#-status)
+Pipeline d'ingestion et d'analyse des données énergétiques avec ETL 3-étapes (Bronze/Silver/Gold), PostgreSQL Star Schema (20,488 lignes), et dashboard temps réel avec 15+ graphes interactifs + API REST.
 
 ---
 
-## 🎯 Aperçu
+## 📊 En résumé
 
-Pipeline ETL **entièrement opérationnel et testé** pour transformer des données d'énergie brutes en un data warehouse analytique prêt pour Business Intelligence.
-
-### ✨ Résultats finaux validés
-
-- ✅ **BRONZE**: 61,554 lignes ingérées en Parquet
-- ✅ **SILVER**: 100% qualité des données (0 rejets)
-- ✅ **GOLD**: 7 tables Star Schema (4 dim + 2 fact)
-- ✅ **POSTGRES**: 20,488 lignes chargées et vérifiées
-
-### 📊 Données intégrées
-
-| Source | Lignes | Couverture | Status |
-|--------|--------|-----------|--------|
-| france_time_series.csv | 50,393 | 2015-2026 horaire | ✅ |
-| eurostat_electricity_france.csv | 417 | 2015-2026 mensuel | ✅ |
-| time_series_60min_sample.csv | 1,000 | Haute fréquence | ✅ |
-| renewable_power_plants_FR.csv | 9,744 | Registre ENR | ✅ |
-| **TOTAL BRONZE** | **61,554** | Complètement chargé | ✅ |
+- ✅ **61,554 lignes** ingérées en Bronze
+- ✅ **100% qualité** (0 rejets en Silver)
+- ✅ **20,488 lignes** chargées PostgreSQL
+- ✅ **15+ graphes** interactifs (Chart.js + Leaflet)
+- ✅ **9 graphes avancés** (production/consommation multi-années)
+- ✅ **API REST** Flask avec 9 endpoints
+- ✅ **Carte SIG** interactive avec 5 installations
 
 ---
 
 ## 🏗️ Architecture
 
-### Pipeline 4 étapes
-
 ```
-SOURCES (61,554 lignes)
-    ↓ 01_bronze_ingest_pandas.py
-[BRONZE] Données brutes Parquet (61,554 lignes)
-    ↓ 02_silver_clean.py  
-[SILVER] Données nettoyées (61,554 lignes, 100% QA)
-    ↓ 03_gold_dwh.py
-[GOLD] Star Schema Parquet (7 tables, 20,488 lignes)
-    ↓ reload_postgres.py
-[POSTGRES] Base relationnelle (20,488 lignes, prêt BI)
+CSV Sources (61,554 lignes)
+    ↓
+BRONZE (raw Parquet)
+    ↓
+SILVER (nettoyé)
+    ↓
+GOLD (Star Schema 7 tables)
+    ↓
+PostgreSQL (20,488 lignes)
+    ↓
+Backend Flask API (9 endpoints)
+    ↓
+Dashboard HTML/JS (15+ graphes)
 ```
 
-### Star Schema (Schéma en étoile)
-
-**Tables de dimension (4):**
-- `dim_date`: 4,383 dates (2015-2026)
-- `dim_energy_type`: 5 types d'énergie
-- `dim_location`: 31 régions françaises
-- `dim_plant`: 9,744 installations ENR
-
-**Tables de faits (2):**
-- `fact_energy_production`: 6,301 enregistrements
-- `fact_renewable_capacity`: 24 enregistrements
+**Star Schema PostgreSQL:**
+- 4 Dimensions: date | energy_type | location | plant
+- 2 Faits: production | capacity
+- 31 régions | 9,744 installations | 4,383 dates | 5 types d'énergie
 
 ---
 
-## 🛠️ Installation & Configuration
+## 🚀 Démarrage Rapide
 
-### Prérequis
-
-- Python 3.10+
-- PostgreSQL 12+
-- 2GB RAM minimum
-
-### 1️⃣ Créer l'environnement virtuel
+### 1. Installation
 
 ```bash
-cd Data-Warehouse-nergie
 python -m venv .venv
-```
-
-### 2️⃣ Activer l'environnement (Windows)
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### 3️⃣ Installer les dépendances
-
-```bash
+.\.venv\Scripts\Activate.ps1  # Windows
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Créer la base PostgreSQL
+### 2. Configuration .env
 
-```sql
-CREATE DATABASE dw_energie_france OWNER postgres;
+```
+DB_USER=postgres
+DB_PASSWORD=jihane
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=dw_energie_france
 ```
 
-### 5️⃣ Configurer les paramètres PostgreSQL
+### 3. Pipeline ETL
 
-Éditer `conf/config.yaml`:
+```bash
+python run.py  # Bronze → Silver → Gold → PostgreSQL (~8s)
+```
 
-```yaml
-postgres:
-  host: "localhost"
-  port: 5432
-  database: "dw_energie_france"
-  user: "postgres"
-  password: "jihane"              # À changer en production
-  schema: "gold"
+### 4. Serveurs
+
+**Terminal 1 - API:**
+```bash
+python backend_api.py  # http://localhost:5000
+```
+
+**Terminal 2 - Dashboard:**
+```bash
+cd dashboard
+python -m http.server 8000  # http://localhost:8000/index.html
+```
+
+### 5. Ouvrir Dashboard
+
+```
+http://localhost:8000/index.html
 ```
 
 ---
 
-## 🎯 Utilisation
+## 📊 Visualisations & Graphes
 
-### Pipeline complet (recommandé)
+### Production (6 graphes)
+- Par type d'énergie (Solaire/Éolien/Hydro)
+- Horaire 24h
+- Par région
+- Mix énergétique %
+- Historique annuel
+- Croissance %
 
-```bash
-.\.venv\Scripts\python.exe run.py
+### Consommation (6 graphes)
+- Par secteur (Industrie/Résidentiel/Tertiaire)
+- Par région
+- Horaire 24h
+- Tendance 12 mois
+- Balance vs Production
+- Efficacité %
+
+### Analyses Avancées (9 graphes)
+1. **Production par région** 2020-2024 (multi-line)
+2. **Comparaison régionale** 2024 (top 10)
+3. **Tendance 5 ans** (mensuel)
+4. **Mix énergétique** par région (stacked)
+5. **Efficacité installations** Capacity Factor (scatter)
+6. **Distribution efficacité** (Production/Pertes)
+7. **Capacité installée** par type (polar)
+8. **Résumé mensuel** 3 ans (dual-axis)
+9. **Analyse distribution** (Production/Pertes/Net)
+
+### Carte SIG
+- 5 installations géolocalisées
+- Pop-ups avec détails (nom, capacité, région)
+- Zoom/Pan interactif
+- Base map Leaflet
+
+---
+
+## 🔗 API REST (9 endpoints)
+
 ```
-
-Exécute toutes les étapes: **BRONZE → SILVER → GOLD → POSTGRES**  
-Durée: ~8 secondes  
-Résultat: 20,488 lignes chargées en PostgreSQL
-
-### Étapes individuelles
-
-```bash
-# Seulement Bronze (ingestion)
-.\.venv\Scripts\python.exe run.py --bronze
-
-# Bronze + Silver (nettoyage)
-.\.venv\Scripts\python.exe run.py --silver
-
-# Bronze + Silver + Gold (sans PostgreSQL)
-.\.venv\Scripts\python.exe run.py --gold
-```
-
-### Commandes utilitaires
-
-```bash
-# Recharger PostgreSQL (supprimer + recharger toutes les données)
-.\.venv\Scripts\python.exe reload_postgres.py
-
-# Vérifier l'intégrité des données (compter les lignes)
-.\.venv\Scripts\python.exe verify_postgres.py
-
-# Exécuter les requêtes SQL d'exemple
-.\.venv\Scripts\python.exe run_queries.py
+GET /health
+GET /api/production-by-city-year        Production région 2020-2024
+GET /api/city-comparison                Comparaison régionale 2024
+GET /api/production-trend-5years        Tendance 5 ans
+GET /api/energy-mix-by-city             Mix énergétique région
+GET /api/optimization-analysis          Efficacité (Capacity Factor)
+GET /api/distribution-analysis          Production/Pertes/Net
+GET /api/capacity-installed             Capacité par type
+GET /api/monthly-summary                Résumé mensuel 3 ans
 ```
 
 ---
 
-## 📂 Structure du projet
+## 📁 Structure
 
 ```
 Data-Warehouse-nergie/
-│
-├── README.md                          ← Documentation
-├── requirements.txt                   ← Dépendances
-├── run.py                             ← Orchestrateur ETL
-│
-├── conf/
-│   └── config.yaml                    ← Configuration centralisée
-│
-├── src/
-│   ├── jobs/
-│   │   ├── 01_bronze_ingest_pandas.py    (Ingestion)
-│   │   ├── 02_silver_clean.py            (Nettoyage)
-│   │   └── 03_gold_dwh.py                (Star Schema)
-│   │
-│   └── lib/
-│       ├── postgres_utils.py          (Connexion PostgreSQL)
-│       ├── spark_utils.py             (Utilitaires Spark)
-│       └── dq_utils.py                (Data Quality)
-│
-├── data/
-│   ├── landing/                       ← Sources CSV
-│   │   ├── france_time_series.csv
-│   │   ├── eurostat_electricity_france.csv
-│   │   ├── time_series_60min_sample.csv
-│   │   └── renewable_power_plants_FR.csv
-│   │
-│   └── warehouse/                     ← Data Warehouse
-│       ├── bronze/                    ← Raw (Parquet)
-│       ├── silver/                    ← Clean (Parquet)
-│       ├── gold/                      ← Analytique (Parquet)
-│       └── dq/                        ← Rejets QA
-│
-├── sql/
-│   └── schema_gold_simple.sql         ← DDL PostgreSQL
-│
-├── QUERIES.sql                        ← 10 requêtes SQL
-│
-├── reload_postgres.py                 ← Reload utilitaire
-├── verify_postgres.py                 ← Vérification intégrité
-└── run_queries.py                     ← Exécution requêtes
+├── src/jobs/
+│   ├── 01_bronze_ingest_pandas.py   CSV → Parquet
+│   ├── 02_silver_clean.py            Nettoyage QA
+│   └── 03_gold_dwh.py                Star Schema
+├── dashboard/
+│   ├── index.html                    Interface
+│   ├── css/style.css                 Dark theme
+│   └── js/
+│       ├── charts.js                 15 graphes
+│       ├── advanced-charts.js        9 graphes PostgreSQL
+│       └── app.js                    Interactions
+├── backend_api.py                    Flask 9 endpoints
+├── run.py                            Orchestration ETL
+├── requirements.txt
+└── README.md
 ```
-
----
-
-## 💾 Star Schema
-
-### Dimension: dim_date
-
-**4,383 dates (2015-2026)**
-
-```sql
-SELECT * FROM gold.dim_date WHERE year = 2023 LIMIT 3;
-```
-
-| date_id | date | year | month | day | quarter | is_weekend |
-|---------|------|------|-------|-----|---------|-----------|
-| 20230101 | 2023-01-01 | 2023 | 1 | 1 | 1 | 0 |
-| 20230102 | 2023-01-02 | 2023 | 1 | 2 | 1 | 0 |
-
-### Dimension: dim_energy_type
-
-**5 types d'énergie**
-
-```sql
-SELECT * FROM gold.dim_energy_type;
-```
-
-| energy_type_id | energy_type_name | category |
-|---|---|---|
-| 1 | Solar | Renewable |
-| 2 | Wind Onshore | Renewable |
-| 3 | Hydro | Renewable |
-| 4 | Load (Consumption) | Consumption |
-| 5 | Other | Other |
-
-### Dimension: dim_location
-
-**31 régions françaises**
-
-```sql
-SELECT DISTINCT region_name FROM gold.dim_location ORDER BY region_name;
-```
-
-Alsace, Auvergne-Rhône-Alpes, Bourgogne-Franche-Comté, Bretagne, Centenaude-Loire, Champagne-Ardenne, Corse, Île-de-France, Limousin, Lorraine, Marche-Régional, Mayenne, Midi-Pyrénées, Morbihan, Moselle, Nièvre, Nord-Pas-de-Calais, Normandie, Nouvelle-Aquitaine, Occitanie, Pays-de-la-Loire, Picardie, Poitou-Charentes, Provence-Alpes-Côte-d'Azur, Rhône, Saône-et-Loire, Seine-Maritime, Somme, Tarn-et-Garonne, Val-d'Oise, Var, Vaucluse, Yonne
-
-### Dimension: dim_plant
-
-**9,744 installations ENR**
-
-```sql
-SELECT * FROM gold.dim_plant WHERE energy_source_level_1 = 'Renewable' 
-ORDER BY capacity_mw DESC LIMIT 5;
-```
-
-| plant_id | plant_name | technology | capacity_mw | region | status |
-|---|---|---|---|---|---|
-| 1234 | Installation A | Photovoltaics | 50.5 | Île-de-France | - |
-| 2345 | Installation B | Hydro | 45.3 | Auvergne-Rhône-Alpes | - |
-
-### Fact Table: fact_energy_production
-
-**6,301 enregistrements**
-
-```sql
-SELECT * FROM gold.fact_energy_production 
-WHERE energy_type_id = 3 AND date_id = 20230101;
-```
-
-| date_id | energy_type_id | value_mw | value_min_mw | value_max_mw | value_avg_mw |
-|---|---|---|---|---|---|
-| 20230101 | 3 | 7500.5 | 6800.0 | 8200.0 | 7500.5 |
-
-### Fact Table: fact_renewable_capacity
-
-**24 enregistrements (capacité par région/technologie)**
-
-```sql
-SELECT * FROM gold.fact_renewable_capacity ORDER BY total_capacity_mw DESC;
-```
-
-| date_id | energy_type_id | region | total_capacity_mw | nb_plants |
-|---|---|---|---|---|
-| 20260111 | 1 | Île-de-France | 1250.5 | 2781 |
-| 20260111 | 2 | Hauts-de-France | 1650.8 | 765 |
 
 ---
 
 ## 📊 Requêtes SQL
 
-### 10 requêtes prêtes dans `QUERIES.sql`:
+### Production par type
 
-1. **Production par type d'énergie**
-   ```sql
-   SELECT energy_type_name, SUM(value_mw) as total_production 
-   FROM fact_energy_production f
-   JOIN dim_energy_type e ON f.energy_type_id = e.energy_type_id
-   GROUP BY energy_type_name ORDER BY total_production DESC;
-   ```
+```sql
+SELECT energy_type, SUM(production_mw) as production
+FROM gold.fact_energy_production f
+JOIN gold.dim_energy_type e ON f.energy_type_id = e.energy_type_id
+GROUP BY energy_type ORDER BY production DESC;
+```
 
-2. **Production annuelle**
-   ```sql
-   SELECT year, SUM(value_mw) as annual_production
-   FROM fact_energy_production f
-   JOIN dim_date d ON f.date_id = d.date_id
-   GROUP BY year ORDER BY year;
-   ```
+### Top 10 installations
 
-3. **Installations par région**
-   ```sql
-   SELECT region, COUNT(*) as nb_plants, ROUND(SUM(capacity_mw)::numeric, 2)
-   FROM dim_plant GROUP BY region ORDER BY nb_plants DESC;
-   ```
+```sql
+SELECT plant_name, technology, capacity_mw, region
+FROM gold.dim_plant ORDER BY capacity_mw DESC LIMIT 10;
+```
 
-4. **Top 10 installations**
-   ```sql
-   SELECT plant_name, technology, capacity_mw, region 
-   FROM dim_plant ORDER BY capacity_mw DESC LIMIT 10;
-   ```
+### Production annuelle
 
-5. **Production saisonnière**
-   ```sql
-   SELECT quarter, AVG(value_avg_mw) as seasonal_avg
-   FROM fact_energy_production f
-   JOIN dim_date d ON f.date_id = d.date_id
-   GROUP BY quarter ORDER BY quarter;
-   ```
-
-6. **Week-end vs Semaine**
-   ```sql
-   SELECT is_weekend, AVG(value_avg_mw) as avg_production
-   FROM fact_energy_production f
-   JOIN dim_date d ON f.date_id = d.date_id
-   WHERE d.year = 2023 GROUP BY is_weekend;
-   ```
-
-7. **Capacité totale**
-   ```sql
-   SELECT SUM(capacity_mw) as total_capacity FROM dim_plant;
-   ```
-
-8. **Évolution capacité** 
-   ```sql
-   SELECT date_id, SUM(total_capacity_mw) as capacity
-   FROM fact_renewable_capacity GROUP BY date_id ORDER BY date_id;
-   ```
-
-9. **Statistiques globales**
-   ```sql
-   SELECT COUNT(*) as total_records, 
-          ROUND(AVG(value_avg_mw)::numeric, 2) as avg_prod,
-          ROUND(MAX(value_max_mw)::numeric, 2) as peak_prod
-   FROM fact_energy_production;
-   ```
-
-10. **Recherche spécifique**
-    ```sql
-    SELECT * FROM dim_plant 
-    WHERE region LIKE '%Aquitaine%' AND technology = 'Photovoltaics'
-    ORDER BY capacity_mw DESC;
-    ```
-
-Exécutez avec: `python run_queries.py`
-
----
-
-## 🔌 Connexion BI
-
-### Power BI
-
-1. Get Data → PostgreSQL
-2. Server: `localhost`
-3. Database: `dw_energie_france`
-4. User: `postgres`
-5. Password: `jihane`
-6. Schema: `gold`
-
-### Tableau
-
-1. Connect → PostgreSQL
-2. Server: `localhost`
-3. Port: `5432`
-4. Database: `dw_energie_france`
-5. Username: `postgres`
-6. Password: `jihane`
-
-### DBeaver (Gratuit)
-
-1. Database → New Connection → PostgreSQL
-2. Host: `localhost`, Port: `5432`
-3. Database: `dw_energie_france`
-4. Username: `postgres`, Password: `jihane`
-
-### Python/Pandas
-
-```python
-import sqlalchemy as sa
-
-engine = sa.create_engine(
-    'postgresql://postgres:jihane@localhost:5432/dw_energie_france'
-)
-
-# Charger une table
-df = pd.read_sql('SELECT * FROM gold.dim_date', engine)
+```sql
+SELECT EXTRACT(YEAR FROM d.date) as year, SUM(f.production_mw)
+FROM gold.fact_energy_production f
+JOIN gold.dim_date d ON f.date_id = d.date_id
+GROUP BY EXTRACT(YEAR FROM d.date);
 ```
 
 ---
 
-## ✅ Status
+## 🔧 Configuration
 
-**État: PRODUCTION READY** ✅
+### requirements.txt (nettoyé)
 
-- [x] Pipeline ETL complet (4 étapes)
-- [x] 61,554 lignes ingérées Bronze
-- [x] 100% Data Quality (0 rejets)
-- [x] 20,488 lignes chargées PostgreSQL
-- [x] Star Schema optimisé (4 dim + 2 fact)
-- [x] 10 requêtes SQL prêtes
-- [x] Documentation complète
-- [x] Scripts de maintenance (reload_postgres.py, verify_postgres.py)
-- [x] Intégration Power BI/Tableau testée
-
-### Durée d'exécution
-
-- Bronze: 2s
-- Silver: 1.5s
-- Gold: 2.5s
-- PostgreSQL: 2s
-- **Total: ~8 secondes**
-
-### Dernière mise à jour
-
-11 Janvier 2026 - Pipeline testé et validé  
-Toutes les données sont en production et prêtes pour BI
-
----
-
-## 🚨 Dépannage
-
-### Erreur: Module not found
-
-```bash
-pip install -r requirements.txt --upgrade
+```
+pandas>=1.5.0
+numpy>=1.23.0
+pyyaml>=6.0
+python-dotenv>=0.21.0
+psycopg2-binary>=2.9.0
+sqlalchemy>=1.4.0
+flask>=3.1.0
+flask-cors>=6.0.0
 ```
 
-### Erreur: PostgreSQL Connection refused
+### conf/config.yaml
 
-Vérifier:
-1. PostgreSQL est lancé: `pg_isready`
-2. `conf/config.yaml` avec les bonnes données
-3. Base `dw_energie_france` existe
-
-### Erreur: CSV not found
-
-Vérifier les fichiers dans `data/landing/`:
-```bash
-ls data/landing/
-```
-
-### Performance lente
-
-Augmenter ressources dans `conf/config.yaml`:
 ```yaml
-spark:
-  cores: "8"
-  memory: "4g"
+bronze:
+  path: data/bronze
+silver:
+  path: data/silver
+gold:
+  path: data/gold
+postgres:
+  schema: gold
 ```
 
 ---
 
-## 📝 Licence
+## 📈 Performance
 
-MIT License - Libre d'utilisation
+| Étape | Durée | Lignes | Status |
+|-------|-------|--------|--------|
+| Bronze | 2s | 61,554 | ✅ |
+| Silver | 1.5s | 61,554 | ✅ |
+| Gold | 2.5s | 20,488 | ✅ |
+| PostgreSQL | 2s | 20,488 | ✅ |
+| **TOTAL** | **~8s** | **20,488** | ✅ |
 
 ---
 
-**Questions?** Consultez `QUERIES.sql` pour des exemples de requêtes complètes.
+## 🐛 Dépannage
+
+**PostgreSQL Connection Error?**
+```bash
+pg_isready
+cat .env  # Vérifier credentials
+```
+
+**Dashboard blanc?**
+```
+Ctrl+Shift+R (vider cache)
+F12 (vérifier console pour erreurs)
+```
+
+**API 404?**
+```
+Vérifier ports 5000 et 8000
+Lancer python backend_api.py en premier
+```
+
+**Données vides?**
+```bash
+python run.py  # Recharger ETL
+python reload_postgres.py  # Recharger BDD
+```
+
+---
+
+## ✅ État: PRODUCTION
+
+- [x] ETL complet 4 étapes
+- [x] 100% Data Quality
+- [x] 20,488 lignes PostgreSQL
+- [x] 15+ graphes interactifs
+- [x] 9 endpoints API
+- [x] Carte SIG
+- [x] Documentation
+
+**Prêt pour BI et analytics.**
+
+---
+
+**Licence:** MIT  
+**Dernière mise à jour:** Janvier 2026

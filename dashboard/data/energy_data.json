@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "name": "Energy DW France Dashboard",
+    "version": "1.0.0",
+    "lastUpdate": "2026-01-11T14:30:00Z",
+    "dataSource": "PostgreSQL - dw_energie_france"
+  },
+  "kpis": {
+    "totalProduction": {
+      "value": 1234,
+      "unit": "MW",
+      "change": 12.5,
+      "trend": "up",
+      "icon": "⚡"
+    },
+    "solarProduction": {
+      "value": 342,
+      "unit": "MW",
+      "change": 8.3,
+      "trend": "up",
+      "icon": "☀️"
+    },
+    "windProduction": {
+      "value": 567,
+      "unit": "MW",
+      "change": -3.2,
+      "trend": "down",
+      "icon": "💨"
+    },
+    "installedCapacity": {
+      "value": 28.5,
+      "unit": "GW",
+      "change": 0,
+      "trend": "stable",
+      "icon": "🔋"
+    }
+  },
+  "productionByType": {
+    "labels": ["Solaire", "Éolien", "Hydro", "Thermique", "Autres"],
+    "values": [342, 567, 298, 145, 82],
+    "colors": ["#ffa500", "#9d5bff", "#00d4ff", "#ff4d7d", "#00ff7f"]
+  },
+  "hourlyProduction": {
+    "hours": [
+      "00h", "01h", "02h", "03h", "04h", "05h", "06h", "07h", "08h", "09h", "10h", "11h",
+      "12h", "13h", "14h", "15h", "16h", "17h", "18h", "19h", "20h", "21h", "22h", "23h"
+    ],
+    "production": [850, 820, 780, 750, 740, 760, 810, 920, 1050, 1150, 1220, 1280, 1300, 1310, 1290, 1250, 1180, 1100, 1020, 950, 900, 880, 850, 830],
+    "consumption": [1100, 1080, 1050, 1020, 1000, 1050, 1150, 1250, 1350, 1400, 1420, 1380, 1350, 1320, 1300, 1320, 1350, 1380, 1400, 1350, 1280, 1200, 1150, 1100]
+  },
+  "capacityByRegion": {
+    "labels": [
+      "Hauts-de-France",
+      "Auvergne-Rhône-Alpes",
+      "Occitanie",
+      "Nouvelle-Aquitaine",
+      "PACA",
+      "Grand-Est",
+      "Bretagne"
+    ],
+    "values": [4.5, 3.8, 3.2, 2.9, 2.6, 2.3, 2.1]
+  },
+  "energyMix": {
+    "labels": ["Solaire", "Éolien", "Hydro", "Thermique", "Autres"],
+    "percentages": [28, 36, 19, 9, 8],
+    "colors": ["#ffa500", "#9d5bff", "#00d4ff", "#ff4d7d", "#00ff7f"]
+  },
+  "efficiency": {
+    "networkUsage": 87,
+    "availableCapacity": 64,
+    "solarPerformance": 79
+  },
+  "topInstallations": [
+    {
+      "id": 1,
+      "name": "Centrale Solaire Nord",
+      "type": "Solaire",
+      "region": "Hauts-de-France",
+      "capacity": 125.5,
+      "production": 98.3,
+      "efficiency": 78,
+      "status": "Actif"
+    },
+    {
+      "id": 2,
+      "name": "Parc Éolien Est",
+      "type": "Éolien",
+      "region": "Auvergne-Rhône-Alpes",
+      "capacity": 234.2,
+      "production": 187.6,
+      "efficiency": 80,
+      "status": "Actif"
+    },
+    {
+      "id": 3,
+      "name": "Barrage Hydro Centre",
+      "type": "Hydro",
+      "region": "Île-de-France",
+      "capacity": 156.8,
+      "production": 142.1,
+      "efficiency": 90,
+      "status": "Actif"
+    },
+    {
+      "id": 4,
+      "name": "Parc Solaire Ouest",
+      "type": "Solaire",
+      "region": "Nouvelle-Aquitaine",
+      "capacity": 198.3,
+      "production": 165.2,
+      "efficiency": 83,
+      "status": "Actif"
+    },
+    {
+      "id": 5,
+      "name": "Éolien offshore Sud",
+      "type": "Éolien",
+      "region": "PACA",
+      "capacity": 287.5,
+      "production": 201.3,
+      "efficiency": 70,
+      "status": "Maintenance"
+    }
+  ],
+  "regions": [
+    {
+      "code": "11",
+      "name": "Île-de-France",
+      "capacity": 1.2,
+      "installations": 245
+    },
+    {
+      "code": "24",
+      "name": "Bourgogne-Franche-Comté",
+      "capacity": 1.8,
+      "installations": 312
+    },
+    {
+      "code": "27",
+      "name": "Auvergne-Rhône-Alpes",
+      "capacity": 3.8,
+      "installations": 642
+    },
+    {
+      "code": "28",
+      "name": "Normandie",
+      "capacity": 2.3,
+      "installations": 389
+    },
+    {
+      "code": "32",
+      "name": "Hauts-de-France",
+      "capacity": 4.5,
+      "installations": 756
+    },
+    {
+      "code": "44",
+      "name": "Grand-Est",
+      "capacity": 2.3,
+      "installations": 378
+    },
+    {
+      "code": "52",
+      "name": "Pays-de-la-Loire",
+      "capacity": 1.9,
+      "installations": 315
+    },
+    {
+      "code": "53",
+      "name": "Bretagne",
+      "capacity": 2.1,
+      "installations": 356
+    },
+    {
+      "code": "75",
+      "name": "Nouvelle-Aquitaine",
+      "capacity": 2.9,
+      "installations": 489
+    },
+    {
+      "code": "76",
+      "name": "Occitanie",
+      "capacity": 3.2,
+      "installations": 542
+    },
+    {
+      "code": "84",
+      "name": "Provence-Alpes-Côte d'Azur",
+      "capacity": 2.6,
+      "installations": 438
+    }
+  ],
+  "alerts": [
+    {
+      "id": 1,
+      "severity": "warning",
+      "message": "Maintenance prévue - Parc Éolien Sud du 15-20 janvier",
+      "timestamp": "2026-01-11T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "severity": "info",
+      "message": "Mise à jour du dashboard prévue jeudi 12 janvier",
+      "timestamp": "2026-01-11T09:00:00Z"
+    },
+    {
+      "id": 3,
+      "severity": "success",
+      "message": "Record de production solaire atteint : 385 MW",
+      "timestamp": "2026-01-10T14:15:00Z"
+    }
+  ]
+}

@@ -1,20 +1,4 @@
-"""
-📘 SILVER LAYER - Nettoyage & Data Quality
-─────────────────────────────────────────
-Objectif: Transformer les données BRONZE en données fiables prêtes pour l'analyse
-- Nettoyage technique (types, trim, déduplication)
-- Nettoyage métier (valeurs négatives, outliers, timestamps cohérents)
-- Data Quality: produire 2 sorties
-  • silver/ : données valides
-  • dq/rejects/ : données rejetées avec motif
-
-Architecture:
-  bronze/ (Parquet brut)
-    ↓
-  silver/ (Parquet nettoyé, typé)
-    ↓
-  dq/rejects/ (Parquet rejeté)
-"""
+"""Silver Layer - Data Cleaning & Quality Control"""
 
 import os
 import sys
