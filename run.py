@@ -2,13 +2,14 @@
 🚀 ORCHESTRATION PIPELINE - Data Warehouse Énergie France
 ─────────────────────────────────────────────────────
 Script principal pour exécuter le pipeline ETL complet:
-  BRONZE (Ingestion) → SILVER (Nettoyage) → GOLD (Star Schema)
+  BRONZE (Ingestion) → SILVER (Nettoyage) → GOLD (Star Schema) → POSTGRES (Load)
 
 Usage:
-  python run.py                    # Exécute tous les étapes
+  python run.py                    # Exécute toutes les étapes
   python run.py --bronze           # Seulement BRONZE
   python run.py --silver           # BRONZE + SILVER
-  python run.py --gold             # BRONZE + SILVER + GOLD (complet)
+  python run.py --gold             # BRONZE + SILVER + GOLD (sans PostgreSQL)
+  python run.py --load             # BRONZE + SILVER + GOLD + POSTGRES (complet)
   python run.py --clean            # Efface les données et relance tout
 """
 
@@ -32,7 +33,7 @@ class PipelineRunner:
             venv_python: Chemin vers le Python du venv (auto-détection si None)
         """
         self.project_root = Path(__file__).parent
-        self.venv_path = self.project_root / "venv_spark"
+        self.venv_path = self.project_root / ".venv"
         
         if venv_python:
             self.python_exe = venv_python
@@ -140,11 +141,21 @@ class PipelineRunner:
         
         return self.run_job("🟡 GOLD (Star Schema)", "03_gold_dwh.py")
     
+    def run_postgres(self) -> bool:
+        """Exécute le chargement PostgreSQL"""
+        # Vérifier que GOLD existe
+        gold_path = self.data_dir / "gold"
+        if not gold_path.exists():
+            print(f"❌ ERREUR: Gold non trouvée. Exécutez GOLD d'abord!")
+            return False
+        
+        return self.run_job("🐘 LOAD (PostgreSQL)", "04_load_postgres.py")
+    
     def run_full_pipeline(self):
-        """Exécute le pipeline complet: BRONZE → SILVER → GOLD"""
+        """Exécute le pipeline complet: BRONZE → SILVER → GOLD → POSTGRES"""
         self.start_time = datetime.now()
         
-        print(f"📋 ÉTAPES: BRONZE → SILVER → GOLD\n")
+        print(f"📋 ÉTAPES: BRONZE → SILVER → GOLD → POSTGRES\n")
         
         # BRONZE
         if not self.run_bronze():
@@ -163,6 +174,13 @@ class PipelineRunner:
         # GOLD
         if not self.run_gold():
             print(f"❌ Pipeline interrompu à l'étape GOLD")
+            self.end_time = datetime.now()
+            self.print_summary()
+            return False
+        
+        # POSTGRES
+        if not self.run_postgres():
+            print(f"❌ Pipeline interrompu à l'étape POSTGRES")
             self.end_time = datetime.now()
             self.print_summary()
             return False
@@ -213,13 +231,14 @@ class PipelineRunner:
         print(f"\n{'─'*80}")
         if success_count == total_count and total_count > 0:
             print(f"🎉 PIPELINE COMPLÉTÉ AVEC SUCCÈS!")
-            print(f"\n✅ Data Warehouse prêt pour BI:")
+            print(f"\n✅ Data Warehouse prêt:")
             print(f"   • Parquet Spark SQL compatible")
+            print(f"   • PostgreSQL chargé et prêt pour requêtes")
             print(f"   • Power BI, Tableau, Metabase")
             print(f"   • Athena, BigQuery, Trino")
             print(f"\n📝 Prochaines étapes:")
-            print(f"   1. Connecter à un outil BI")
-            print(f"   2. Créer des dashboards")
+            print(f"   1. Connecter PostgreSQL à un outil BI")
+            print(f"   2. Créer des dashboards analytiques")
             print(f"   3. Configurer Airflow pour la récurrence")
         else:
             print(f"⚠️  PIPELINE INCOMPLÈTE ({success_count}/{total_count} étapes réussies)")
@@ -234,10 +253,11 @@ def main():
         description="Orchestrateur pipeline ETL - Data Warehouse Énergie France",
         epilog="""
 Exemples:
-  python run.py                    # Pipeline complet (BRONZE → SILVER → GOLD)
+  python run.py                    # Pipeline complet (BRONZE → SILVER → GOLD → POSTGRES)
   python run.py --bronze           # Seulement BRONZE
   python run.py --silver           # BRONZE + SILVER
-  python run.py --gold             # BRONZE + SILVER + GOLD (alias du défaut)
+  python run.py --gold             # BRONZE + SILVER + GOLD (sans PostgreSQL)
+  python run.py --load             # BRONZE + SILVER + GOLD + POSTGRES (alias du défaut)
   python run.py --clean            # Efface données + relance tout
   python run.py --clean --bronze   # Efface + seulement BRONZE
         """,
@@ -259,7 +279,13 @@ Exemples:
     parser.add_argument(
         "--gold",
         action="store_true",
-        help="Exécuter BRONZE + SILVER + GOLD (défaut)"
+        help="Exécuter BRONZE + SILVER + GOLD (sans PostgreSQL)"
+    )
+    
+    parser.add_argument(
+        "--load",
+        action="store_true",
+        help="Exécuter BRONZE + SILVER + GOLD + POSTGRES (complet, défaut)"
     )
     
     parser.add_argument(
@@ -309,7 +335,29 @@ Exemples:
         runner.end_time = datetime.now()
         success = True
     
-    else:  # défaut: gold (complet)
+    elif args.gold:
+        print(f"📋 ÉTAPES: BRONZE → SILVER → GOLD\n")
+        runner.start_time = datetime.now()
+        
+        if not runner.run_bronze():
+            runner.end_time = datetime.now()
+            runner.print_summary()
+            sys.exit(1)
+        
+        if not runner.run_silver():
+            runner.end_time = datetime.now()
+            runner.print_summary()
+            sys.exit(1)
+        
+        if not runner.run_gold():
+            runner.end_time = datetime.now()
+            runner.print_summary()
+            sys.exit(1)
+        
+        runner.end_time = datetime.now()
+        success = True
+    
+    else:  # défaut: load (complet BRONZE → SILVER → GOLD → POSTGRES)
         success = runner.run_full_pipeline()
     
     runner.print_summary()

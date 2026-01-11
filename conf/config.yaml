@@ -46,3 +46,22 @@ partitioning:
     enabled: false
   gold:
     enabled: false
+
+# Configuration PostgreSQL
+postgres:
+  host: "localhost"
+  port: 5432
+  database: "dw_energie_france"
+  user: "postgres"
+  password: "jihane"
+  schema: "gold"
+  
+  # Tables à charger
+  tables:
+    - dim_date
+    - dim_energy_type
+    - dim_location
+    - dim_plant
+    - fact_energy_production
+    - fact_renewable_capacity
+    - fact_monthly_summary
